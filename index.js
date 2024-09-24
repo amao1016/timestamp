@@ -23,7 +23,19 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
+//:date?表示可選參數(可為空)
+app.get("/api/:date?",(req,res)=>{
+  let dateString = req.params.date;
+  if(!dateString) //字串為空 返回目前
+    return res.json({unix:new Date().getTime(),utc:new Date().toUTCString()});
 
+  let date = !isNaN(dateString)? new Date(parseInt(dateString)) : new Date(dateString);
+            //字串如果有無法傳成數字的就會變非nan Date()會自動判斷unix或日期
+  let unixstamp = date.getTime(); //單位是毫秒
+  let utcstamp=date.toUTCString();
+  if(date.toString() === "Invalid Date") return res.json({error:"Invalid Date"});
+  else return res.json({unix:unixstamp,utc:utcstamp});
+});
 
 
 // Listen on port set in environment variable or default to 3000
